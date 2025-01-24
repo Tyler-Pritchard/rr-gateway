@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  api-gateway:
+    build: .
+    container_name: api-gateway
+    ports:
+      - "8081:8081"
+    networks:
+      - shared_network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://api-gateway:8081/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+networks:
+  shared_network:
+    external: true  # ✅ Ensures `api-gateway` connects to the shared network
