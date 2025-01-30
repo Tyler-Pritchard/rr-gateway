@@ -38,7 +38,7 @@ func main() {
 
 	// Proxy route for the Auth service
 	app.All("/api/auth/*", func(c *fiber.Ctx) error {
-		target := "http://rr-auth:5000/api" + c.OriginalURL()[len("/api/auth"):]
+		target := "http://rr-auth:5000" + c.OriginalURL()
 		log.Printf("Routing request to Auth service: %s", target)
 		return proxy.Do(c, target)
 	})
@@ -46,6 +46,9 @@ func main() {
 	// Proxy route for the E-Store service
 	app.All("/api/estore/*", func(c *fiber.Ctx) error {
 		targetURL := "http://rr-store:8080" + c.OriginalURL()[len("/api/estore"):]
+		if c.OriginalURL() == "/api/estore/health" {
+			targetURL = "http://rr-store:8080/actuator/health" // ✅ Fix incorrect routing
+		}
 		log.Printf("Routing request to E-Store service: %s", targetURL)
 		return proxy.Do(c, targetURL)
 	})

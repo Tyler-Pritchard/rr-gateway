@@ -6,14 +6,18 @@ services:
     container_name: api-gateway
     ports:
       - "8081:8081"
+    env_file:
+      - secrets.env
+    depends_on:
+      rr-auth:
+        condition: service_healthy
+      rr-store:
+        condition: service_healthy
+      rr-payments:
+        condition: service_healthy
     networks:
       - shared_network
-    healthcheck:
-      test: ["CMD-SHELL", "curl -f http://api-gateway:8081/health || exit 1"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
 
 networks:
   shared_network:
-    external: true  # ✅ Ensures `api-gateway` connects to the shared network
+    external: true
