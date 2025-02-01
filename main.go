@@ -38,7 +38,10 @@ func main() {
 
 	// Proxy route for the Auth service
 	app.All("/api/auth/*", func(c *fiber.Ctx) error {
-		target := "http://rr-auth:5000" + c.OriginalURL()
+		target := "http://rr-auth:5000" + c.OriginalURL()[len("/api/auth"):] // Correct dynamic routing
+		if c.OriginalURL() == "/api/auth/health" {
+			target = "http://rr-auth:5000/health" // Correct health endpoint
+		}
 		log.Printf("Routing request to Auth service: %s", target)
 		return proxy.Do(c, target)
 	})

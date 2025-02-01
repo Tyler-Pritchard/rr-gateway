@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rr-gateway
+  labels:
+    app: rr-gateway
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rr-gateway
+  template:
+    metadata:
+      labels:
+        app: rr-gateway
+    spec:
+      containers:
+      - name: rr-gateway
+        image: rr-gateway:latest
+        imagePullPolicy: Never  # ✅ Ensure Kubernetes uses the local image
+        ports:
+        - containerPort: 8081
+        resources:  # ✅ Adding resource limits as suggested by VS Code
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: rr-gateway
+spec:
+  selector:
+    app: rr-gateway
+  ports:
+    - protocol: TCP
+      port: 8081
+      targetPort: 8081
+  type: LoadBalancer
