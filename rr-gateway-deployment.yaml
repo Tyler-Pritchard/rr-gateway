@@ -16,8 +16,8 @@ spec:
     spec:
       containers:
       - name: rr-gateway
-        image: rr-gateway:latest
-        imagePullPolicy: Never  # ✅ Ensure Kubernetes uses the local image
+        image: tylerpritchard/rr-gateway:latest
+        imagePullPolicy: Always
         ports:
         - containerPort: 8081
         resources:  # ✅ Adding resource limits as suggested by VS Code
